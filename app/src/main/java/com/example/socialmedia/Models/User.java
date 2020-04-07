@@ -1,14 +1,20 @@
 package com.example.socialmedia.Models;
 
-public class UserModel {
+public class User {
     private String username;
     private String email;
     private String profileImageUri;
+    private String userid;
 
-    public UserModel(String username, String email, String profileImageUri) {
+    public User(String username, String email, String profileImageUri, String userid) {
         this.username = username;
         this.email = email;
         this.profileImageUri = profileImageUri;
+        this.userid = userid;
+    }
+
+    public User() {
+
     }
 
     public String getUsername() {
@@ -35,12 +41,22 @@ public class UserModel {
         this.profileImageUri = profileImageUri;
     }
 
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
+
+
     @Override
     public String toString() {
-        return "UserModel{" +
+        return "User{" +
                 "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", profileImageUri='" + profileImageUri + '\'' +
+                ", userid='" + userid + '\'' +
                 '}';
     }
 }

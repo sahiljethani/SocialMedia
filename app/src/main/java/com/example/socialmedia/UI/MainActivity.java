@@ -1,4 +1,4 @@
-package com.example.socialmedia;
+package com.example.socialmedia.UI;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -6,14 +6,21 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SlidingDrawer;
 import android.widget.Toast;
+
+import com.example.socialmedia.R;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private FirebaseAuth mAuth;
     private NavigationView navigationView;
     private RecyclerView userpostList;
     private DrawerLayout drawerLayout;
@@ -24,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
 
         //Initialing Variables
         toolbar = (Toolbar) findViewById(R.id.home_appbar_layout);
@@ -63,9 +71,21 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
+                signOut();
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 break;
+
         }
+    }
+
+    public void signOut() {
+
+        mAuth.signOut();
+        Intent intent = new Intent(MainActivity.this, LoginPage.class);
+        startActivity(intent);
+        finish();
+
+
     }
     private void setupActionBar() {
         setSupportActionBar(toolbar);
