@@ -10,17 +10,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UI.NewProfile"></activity>
-        <activity android:name=".UI.LoginPage" >
+        <activity android:name=".UI.SetupProfileActivity"></activity>
+        <activity android:name=".UI.RegisterActivity" />
+        <activity android:name=".UI.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.MainActivity">
-
-        </activity>
+        <activity android:name=".UI.MainActivity"></activity>
     </application>
 
 </manifest>
