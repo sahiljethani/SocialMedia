@@ -29,9 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-    private EditText mEmail, mPassword, mUsername;
+    private EditText mEmail, mPassword;
     String email;
-    String username;
     String password;
 
 
@@ -42,7 +41,6 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mEmail = findViewById(R.id.emailId);
         mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.username);
     }
 
     @Override
@@ -68,9 +66,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         email = mEmail.getText().toString();
         password = mPassword.getText().toString();
-        username = mUsername.getText().toString();
 
-        if (!validateForm(email, password, username)) {
+
+        if (!validateForm(email, password)) {
             return;
         }
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -101,12 +99,11 @@ public class RegisterActivity extends AppCompatActivity {
 private void sendUsertoSetup() {
 
     Intent intent = new Intent(RegisterActivity.this, SetupProfileActivity.class);
-    intent.putExtra("username",username);
     startActivity(intent);
     finish();
 }
 
-    private boolean validateForm(String email, String password, String username) {
+    private boolean validateForm(String email, String password) {
         boolean valid = true;
 
         if (TextUtils.isEmpty(email)) {
@@ -121,12 +118,7 @@ private void sendUsertoSetup() {
         } else {
             mPassword.setError(null);
         }
-        if (TextUtils.isEmpty(username)) {
-            mUsername.setError("Required.");
-            valid = false;
-        } else {
-            mUsername.setError(null);
-        }
+
         return valid;
     }
 
