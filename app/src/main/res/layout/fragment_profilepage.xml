@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.Profilepage">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="100"
+            android:orientation="vertical"
+            android:id="@+id/profilelayout">
+
+            <include
+            layout="@layout/snippet_profile_info"
+            android:id="@+id/profile_info"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/user_bio"
+                android:layout_height="100dp"
+                android:text="Here the bio comes..............."
+                android:textSize="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp" />
+
+
+            <include
+            layout="@layout/snippet_profile_details"
+                android:id="@+id/profile_details"/>
+
+
+        </LinearLayout>
+
+       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="100"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:id="@+id/postlayout">
+
+        <GridView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="3">
+        </GridView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

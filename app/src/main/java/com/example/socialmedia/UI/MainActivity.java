@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -12,10 +13,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialmedia.Models.User;
+import com.example.socialmedia.Fragments.Profilepage;
 import com.example.socialmedia.R;
+import com.example.socialmedia.UserClient.UserClient;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,6 +34,7 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     private FirebaseAuth mAuth;
     private NavigationView navigationView;
@@ -39,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mUserRef;
     private TextView nav_username;
     private CircleImageView nav_profile_image;
+    private User mCurrUser;
     String currentUserId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +70,37 @@ public class MainActivity extends AppCompatActivity {
         setupDrawerLayout();
         setupNavigationHeader();
 
+        //Setting the Current User for the whole app and setting the navigation Details
+
+        mCurrUser=((UserClient)(getApplicationContext())).getUser();
+
+        if( (mCurrUser ==null)
+             || (!mCurrUser.getUserid().equals(currentUserId)) )
+            getCurrUser();
+        else
+            setNavigationDetails();
+
+
+    }
+
+    private void setNavigationDetails() {
+        String username=mCurrUser.getUsername();
+        String profileData=mCurrUser.getProfileImageUri();
+        nav_username.setText(username);
+        Picasso.get().load(profileData).into(nav_profile_image);
+    }
+
+    private void getCurrUser() {
+
         mUserRef.child(currentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String username=dataSnapshot.child("username").getValue().toString();
-                    String profileData=dataSnapshot.child("profileImageUri").getValue().toString();
-                    nav_username.setText(username);
-                    Picasso.get().load(profileData).into(nav_profile_image);
-
+                    mCurrUser=dataSnapshot.getValue(User.class);
+                    ((UserClient)(getApplicationContext())).setUser(mCurrUser);
+                    Log.d(TAG, "onDataChange: Curr User is " + mCurrUser.getFullname());
+                   setNavigationDetails();
                 }
-
             }
 
             @Override
@@ -81,13 +109,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
     }
+
+
 
     @Override
     public void onStart() {
@@ -138,10 +162,12 @@ public class MainActivity extends AppCompatActivity {
     private void menuSelector(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
+                //home fragment called
                 Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_profile:
-                Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show();
+                gotoProfile();
+                Toast.makeText(this, "Profile Page", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
                 signOut();
@@ -149,6 +175,20 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
         }
+    }
+
+    private void gotoProfile() {
+
+            Log.d(TAG, "inflating profile page " );
+
+            Profilepage fragment = new Profilepage();
+            FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.profile_container, fragment);
+            transaction.addToBackStack("Profilepage");
+            transaction.commit();
+            getSupportActionBar().setTitle("Profile Page");
+
+
     }
 
     public void signOut() {

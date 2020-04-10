@@ -12,19 +12,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
-import com.example.socialmedia.UserClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: CREATED");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
+        //Initializing
         mAuth = FirebaseAuth.getInstance();
         mEmail = findViewById(R.id.email_id);
         mPassword = findViewById(R.id.password);
@@ -54,12 +50,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null)
-        {
+        {   mPb.setVisibility(View.VISIBLE);
             SendUserToMainActivity();
         }
     }
 
     private void SendUserToMainActivity() {
+
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);
@@ -85,10 +82,11 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        mPb.setVisibility(View.VISIBLE);
                         if (task.isSuccessful()) {
-                            mPb.setVisibility(View.VISIBLE);
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             SendUserToMainActivity();
@@ -96,6 +94,9 @@ public class LoginActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                            mPb.setVisibility(View.INVISIBLE);
+
+
                         }
 
                     }

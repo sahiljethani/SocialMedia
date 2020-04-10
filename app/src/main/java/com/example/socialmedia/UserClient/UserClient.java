@@ -1,4 +1,4 @@
-package com.example.socialmedia;
+package com.example.socialmedia.UserClient;
 
 import android.app.Application;
 

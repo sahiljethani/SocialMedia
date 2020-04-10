@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/black"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/line1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/line1"
+            android:layout_width="2dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/black"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/line2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/noPost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="420"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            app:layout_constraintEnd_toStartOf="@+id/line2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/noFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="420"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            app:layout_constraintEnd_toStartOf="@+id/line1"
+            app:layout_constraintStart_toEndOf="@+id/line2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/noFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="420"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/line1"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/Post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Posts"
+            android:textColor="@color/grey"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/line2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/noPost" />
+
+        <TextView
+            android:id="@+id/Followers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Followers"
+            android:textColor="@color/grey"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/line1"
+            app:layout_constraintStart_toEndOf="@+id/line2"
+            app:layout_constraintTop_toBottomOf="@+id/noFollowers" />
+
+        <TextView
+            android:id="@+id/Following"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Following"
+            android:textColor="@color/grey"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/line1"
+            app:layout_constraintTop_toBottomOf="@+id/noFollowing" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
