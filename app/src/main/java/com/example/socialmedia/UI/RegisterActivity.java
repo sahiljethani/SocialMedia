@@ -74,11 +74,11 @@ public class RegisterActivity extends AppCompatActivity {
         if (!validateForm(email, password)) {
             return;
         }
+        mPb.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        mPb.setVisibility(View.VISIBLE);
 
 
                         if (task.isSuccessful()) {

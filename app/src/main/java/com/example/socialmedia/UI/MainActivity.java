@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         String username=mCurrUser.getUsername();
         String profileData=mCurrUser.getProfileImageUri();
         nav_username.setText(username);
+        if(!profileData.equals("defaultpic"))
         Picasso.get().load(profileData).into(nav_profile_image);
     }
 
@@ -184,7 +185,6 @@ public class MainActivity extends AppCompatActivity {
             Profilepage fragment = new Profilepage();
             FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.profile_container, fragment);
-            transaction.addToBackStack("Profilepage");
             transaction.commit();
             getSupportActionBar().setTitle("Profile Page");
 

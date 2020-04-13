@@ -1,38 +1,44 @@
-package com.example.socialmedia.UI;
+package com.example.socialmedia.Fragments;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.ContentResolver;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
+import com.example.socialmedia.UI.MainActivity;
+import com.example.socialmedia.UI.SetupProfileActivity;
+import com.example.socialmedia.UserClient.UserClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -40,30 +46,49 @@ import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class SetupProfileActivity extends AppCompatActivity {
+import static android.app.Activity.RESULT_OK;
 
-    private EditText user_fullname;
+
+public class EditProfile extends Fragment {
+
+
+    private static final String TAG = "EditProfile";
+
     private EditText user_bio;
-    private EditText user_name;
     private Button saveUserbt;
     private CircleImageView user_profile_pic;
     private FirebaseAuth mAuth;
     private DatabaseReference mUserRef;
     private StorageReference mUserProfileImageRef;
+    private User mCurruser;
     String currentUserId;
+
     Uri resultUri;
 
+    public EditProfile() {
+        // Required empty public constructor
+    }
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setup_profile);
+        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
+
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View view=inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
         //Initializing Variables
-        user_fullname = findViewById(R.id.user_fullname);
-        user_bio = findViewById(R.id.user_bio);
-        saveUserbt = findViewById(R.id.saveUserbt);
-        user_profile_pic= findViewById(R.id.profile_image);
-        user_name=findViewById(R.id.user_name);
+        user_bio = view.findViewById(R.id.edit_user_bio);
+        saveUserbt = view.findViewById(R.id.edit_changeBtn);
+        user_profile_pic= view.findViewById(R.id.editProfile_image);
+        //user_name=view.findViewById(R.id.user_name);
 
         //Firebase Variables
         mAuth= FirebaseAuth.getInstance();
@@ -71,9 +96,12 @@ public class SetupProfileActivity extends AppCompatActivity {
         mUserRef= FirebaseDatabase.getInstance().getReference("Users");
         mUserProfileImageRef= FirebaseStorage.getInstance().getReference().child("profile_images");
 
+        setLayout();
+
         saveUserbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: CLicked");
                 uploadImage();
             }
         });
@@ -89,10 +117,23 @@ public class SetupProfileActivity extends AppCompatActivity {
             }
         });
 
+        return view;
     }
 
+
+    private void setLayout() {
+
+        if(!(mCurruser.getUserbio().equals("")))
+            user_bio.setText(mCurruser.getUserbio());
+        if(!mCurruser.getProfileImageUri().equals("defaultpic"))
+            Picasso.get().load(mCurruser.getProfileImageUri()).into(user_profile_pic);
+
+    }
+
+
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
@@ -100,24 +141,24 @@ public class SetupProfileActivity extends AppCompatActivity {
             CropImage.activity()
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1, 1)
-                    .start(this);
+                    .start(getContext(),this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
             if (resultCode == RESULT_OK) {
-                 resultUri = result.getUri();
-                 try {
-                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
-                     user_profile_pic.setImageBitmap(bitmap);
-                 }   catch (IOException e) {
-                     e.printStackTrace();
-                 }
+                resultUri = result.getUri();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), resultUri);
+                    user_profile_pic.setImageBitmap(bitmap);
+                }   catch (IOException e) {
+                    e.printStackTrace();
+                }
 
             } else {
-                Toast.makeText(this, "Error Occurred: Image cant be cropped, Try Again", Toast.LENGTH_SHORT).show();
-            }
+                Log.d(TAG, "onActivityResult: Image can not be cropped ");
+           }
 
         }
     }
@@ -126,7 +167,7 @@ public class SetupProfileActivity extends AppCompatActivity {
     private void uploadImage() {
         if(resultUri==null)
 
-        {  saveUserInfo("defaultpic");
+        {  saveUserInfo(mCurruser.getProfileImageUri());
             return;
 
         }
@@ -161,70 +202,47 @@ public class SetupProfileActivity extends AppCompatActivity {
 
     private void saveUserInfo(String profileImageUrl) {
 
-        FirebaseUser currentUser= mAuth.getCurrentUser();
-        String fullname=user_fullname.getText().toString();
         String userbio=user_bio.getText().toString();
-       // if(userbio.equals(""))
-       //     userbio="empty";
-        String email= currentUser.getEmail();
-        String userid= currentUser.getUid();
-        String username=user_name.getText().toString();
-
-
-
-        if (!validateForm(fullname,username)) {
-            return;
-        }
+        String userid= mCurruser.getUserid();
 
         User user= new User();
-        user.setEmail(email);
-        user.setFullname(fullname);
+        user.setEmail(mCurruser.getEmail());
+        user.setFullname(mCurruser.getFullname());
         user.setUserbio(userbio);
         user.setUserid(userid);
-        user.setUsername(username);
+        user.setUsername(mCurruser.getUsername());
         user.setProfileImageUri(profileImageUrl);
+        ((UserClient)(getActivity().getApplicationContext())).setUser(user);
 
-      mUserRef.child(userid).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-          @Override
-          public void onComplete(@NonNull Task<Void> task) {
-              if (task.isSuccessful()) {
-                  SendUserToMainActivity();
-                  Log.d("Setup", "onComplete: User added");
 
-              } else
-                  Log.d("Setup", "onComplete: Not able to add user");
+        mUserRef.child(userid).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    SendUserToProfilePage();
+                    Log.d("Setup", "onComplete: User added");
 
-          }
+                } else
+                    Log.d("Setup", "onComplete: Not able to add user");
 
-      }).addOnFailureListener(new OnFailureListener() {
-          @Override
-          public void onFailure(@NonNull Exception e) {
-          }
-      });
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        });
     }
 
-    private void SendUserToMainActivity() {
-        Intent mainIntent = new Intent(SetupProfileActivity.this, MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-        finish();
+    private void SendUserToProfilePage() {
+
+        Log.d(TAG, "inflating Profile Page " );
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(this);
+        fragmentTransaction.commit();
+
     }
 
-    private boolean validateForm(String fullname,String username) {
 
-        boolean valid = true;
-        if (TextUtils.isEmpty(fullname)) {
-            user_fullname.setError("Required.");
-            valid = false;
-        } else {
-            user_fullname.setError(null);
-        }
-        if (TextUtils.isEmpty(username)) {
-            user_name.setError("Required.");
-            valid = false;
-        } else {
-            user_name.setError(null);
-        }
-        return valid;
-    }
 }

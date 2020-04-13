@@ -12,7 +12,7 @@
         android:layout_height="125dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:src="@android:drawable/btn_star"
+        android:src="@drawable/defaultpic"
         app:civ_border_color="#DB4040"
         app:civ_border_width="2dp"
         app:layout_constraintBottom_toBottomOf="parent"

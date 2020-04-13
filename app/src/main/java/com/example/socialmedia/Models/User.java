@@ -77,6 +77,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", profileImageUri='" + profileImageUri + '\'' +
                 ", userid='" + userid + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", userbio='" + userbio + '\'' +
                 '}';
     }
+
 }
