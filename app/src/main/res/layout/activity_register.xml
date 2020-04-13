@@ -43,7 +43,7 @@
         android:layout_height="50dp"
         android:background="@drawable/button1"
         android:onClick="createAccount"
-        android:text="Next"
+        android:text="Continue"
         android:textColor="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
