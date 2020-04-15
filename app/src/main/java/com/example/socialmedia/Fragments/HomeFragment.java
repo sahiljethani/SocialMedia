@@ -99,7 +99,7 @@ public class HomeFragment extends Fragment {
         CreatePostFragment fragment = new CreatePostFragment();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.createPost_container, fragment);
+        fragmentTransaction.add(R.id.mainContainer, fragment);
         fragmentTransaction.addToBackStack("posts");
         fragmentTransaction.commit();
 
