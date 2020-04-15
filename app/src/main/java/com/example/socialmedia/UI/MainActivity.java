@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialmedia.Fragments.HomeFragment;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.Fragments.Profilepage;
 import com.example.socialmedia.R;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private NavigationView navigationView;
-    private RecyclerView userpostList;
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         setupActionBar();
         setupDrawerLayout();
         setupNavigationHeader();
+        gotoHome();
 
         //Setting the Current User for the whole app and setting the navigation Details
 
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     private void menuSelector(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
-                //home fragment called
+                gotoHome();
                 Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_profile:
@@ -188,7 +190,14 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
             getSupportActionBar().setTitle("Profile Page");
 
+    }
 
+    private void gotoHome() {
+        FragmentManager fragmentManager= getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        HomeFragment fragment= new HomeFragment();
+        fragmentTransaction.replace(R.id.home_container,fragment);
+        fragmentTransaction.commit();
     }
 
     public void signOut() {
