@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/home_appbar"
-    android:background="@color/colorPrimaryDark">
+    android:background="@drawable/appthemesolid">
+
 
 </androidx.appcompat.widget.Toolbar>

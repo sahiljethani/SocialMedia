@@ -12,13 +12,18 @@ import androidx.appcompat.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.socialmedia.Fragments.HomeFragment;
+import com.example.socialmedia.Adapters.Userlist_Adapter;
+import com.example.socialmedia.Fragments.SearchFragment;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.Fragments.Profilepage;
 import com.example.socialmedia.R;
@@ -177,7 +182,27 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 break;
 
+            case R.id.nav_search:
+                gotoSearch();
+                Toast.makeText(this, "Search Page", Toast.LENGTH_SHORT).show();
+                break;
+
         }
+    }
+
+    private void gotoSearch() {
+
+
+        Log.d(TAG, "inflating search page " );
+
+        SearchFragment fragment = new SearchFragment();
+        FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainContainer, fragment);
+        transaction.commit();
+        getSupportActionBar().setTitle("Search Page");
+
+
+
     }
 
     private void gotoProfile() {
@@ -186,18 +211,23 @@ public class MainActivity extends AppCompatActivity {
 
             Profilepage fragment = new Profilepage();
             FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.profile_container, fragment);
+            transaction.replace(R.id.mainContainer, fragment);
             transaction.commit();
             getSupportActionBar().setTitle("Profile Page");
 
     }
 
     private void gotoHome() {
-        FragmentManager fragmentManager= getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        HomeFragment fragment= new HomeFragment();
-        fragmentTransaction.replace(R.id.home_container,fragment);
-        fragmentTransaction.commit();
+
+
+        Log.d(TAG, "inflating home page " );
+
+        HomeFragment fragment = new HomeFragment();
+        FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainContainer, fragment);
+        transaction.commit();
+        getSupportActionBar().setTitle("Home Page");
+
     }
 
     public void signOut() {
