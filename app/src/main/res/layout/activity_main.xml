@@ -23,14 +23,21 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="58dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/user_post_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </FrameLayout>
 
         <FrameLayout
             android:id="@+id/profile_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="58dp">
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/createPost_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
