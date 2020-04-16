@@ -60,6 +60,8 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
     private RecyclerView recyclerView;
     private Userlist_Adapter adapter;
 
+    FragmentActionListener fragmentActionListener;
+
     String currentUserId;
 
 
@@ -77,12 +79,7 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
         mCurrUser=((UserClient)(getActivity().getApplicationContext())).getUser();
         mUserRef= FirebaseDatabase.getInstance().getReference().child("Users");
 
-        setHasOptionsMenu(true);
-
-
-
-        //currentUserId= mAuth.getCurrentUser().getUid();
-
+        setHasOptionsMenu(false);
 
     }
 
@@ -93,14 +90,9 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
         context = container.getContext();
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-
         recyclerView = view.findViewById(R.id.userlist_Recyclerview);
-
-
         getUsers();
-
-
-
+        setHasOptionsMenu(true);
 
         // Inflate the layout for this fragment
         return view;
@@ -115,9 +107,7 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-
-
-
+                    mUser.clear();
                     for ( DataSnapshot snapshot : dataSnapshot.getChildren() )
                     {
                         User user = snapshot.getValue(User.class);
@@ -125,6 +115,8 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
                             mUser.add(user);
                         Log.d(TAG, "onDataChange: User add in the list : "+ user.getFullname());
                     }
+
+                    Log.d(TAG, "onDataChange: Array Size is " + mUser.size());
 
                     initRecyclerView();
                 }
@@ -148,6 +140,10 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
     }
 
+
+    public void setFragmentActionListener(FragmentActionListener fragmentActionListener) {
+        this.fragmentActionListener = fragmentActionListener;
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -184,5 +180,12 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
     @Override
     public void onUserClick(User user) {
         Log.d(TAG, "onUserClick: Clicked on " +user.getFullname());
+
+        if (fragmentActionListener!=null){
+            Bundle bundle = new Bundle();
+            bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_USER_SELECTED);
+            bundle.putString(FragmentActionListener.KEY_SELECTED_USERID, user.getUserid());
+            fragmentActionListener.onActionPerformed(bundle);
+        }
     }
 }

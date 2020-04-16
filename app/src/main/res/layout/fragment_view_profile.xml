@@ -1,22 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.Profilepage"
     android:background="#FFF"
-    android:id="@+id/profile_fragment_container">
-
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
+    tools:context=".Fragments.ViewProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/linlayout"
         android:orientation="vertical">
 
 
@@ -24,16 +16,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="100"
-            android:orientation="vertical"
-            android:id="@+id/profilelayout">
+            android:orientation="vertical">
 
             <include
-            layout="@layout/snippet_profilepage_info"
-            android:id="@+id/profile_info"/>
+                layout="@layout/snippet_viewprofile_info"
+                android:id="@+id/userProfile_fragment_info"/>
 
             <TextView
                 android:layout_width="match_parent"
-                android:id="@+id/user_bio"
+                android:id="@+id/userProfile_fragment_bio"
                 android:layout_height="100dp"
                 android:text="@string/Default_bio"
                 android:textSize="20dp"
@@ -42,32 +33,29 @@
 
 
             <include
-            layout="@layout/snippet_profilepage_details"
-                android:id="@+id/profile_details"/>
-
+                layout="@layout/snippet_profilepage_details"
+                android:id="@+id/userProfile_fragment_details"/>
 
         </LinearLayout>
 
-       <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="100"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp"
-        android:id="@+id/postlayout">
-
-        <GridView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:numColumns="3">
-        </GridView>
+            android:weightSum="100"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
+            android:id="@+id/postlayout">
+
+            <GridView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:numColumns="3">
+            </GridView>
 
         </LinearLayout>
 
     </LinearLayout>
 
-
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 </FrameLayout>
