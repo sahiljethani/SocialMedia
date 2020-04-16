@@ -4,26 +4,21 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.socialmedia.Fragments.FragmentActionListener;
 import com.example.socialmedia.Fragments.HomeFragment;
-import com.example.socialmedia.Adapters.Userlist_Adapter;
 import com.example.socialmedia.Fragments.SearchFragment;
+import com.example.socialmedia.Fragments.ViewProfileFragment;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.Fragments.Profilepage;
 import com.example.socialmedia.R;
@@ -40,7 +35,7 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentActionListener {
     private static final String TAG = "MainActivity";
 
     private FirebaseAuth mAuth;
@@ -198,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         SearchFragment fragment = new SearchFragment();
         FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.mainContainer, fragment);
+        fragment.setFragmentActionListener(this);
         transaction.commit();
         getSupportActionBar().setTitle("Search Page");
 
@@ -272,4 +268,28 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onActionPerformed(Bundle bundle) {
+        int actionPerformed = bundle.getInt(FragmentActionListener.ACTION_KEY);
+        switch (actionPerformed){
+            case FragmentActionListener.ACTION_VALUE_USER_SELECTED:
+                gotoViewProfile (bundle);
+                break;
+        }
+    }
+
+    private void gotoViewProfile(Bundle bundle) {
+
+
+        Log.d(TAG, "inflating View Profile " );
+
+        ViewProfileFragment fragment = new ViewProfileFragment();
+        FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainContainer, fragment);
+        transaction.addToBackStack(null);
+        fragment.setArguments(bundle);
+        transaction.commit();
+
+
+    }
 }
