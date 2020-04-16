@@ -4,6 +4,7 @@ package com.example.socialmedia.Fragments;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,24 +17,44 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.socialmedia.Models.Posts;
+import com.example.socialmedia.Models.User;
 import com.example.socialmedia.PostViewHolder;
 import com.example.socialmedia.R;
+import com.example.socialmedia.UserClient.UserClient;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
+    private User mCurruser;
     private FloatingActionButton fab_post;
     private RecyclerView userpostList;
-    private DatabaseReference mPostRef;
+    Boolean isLiked=false;
+
+
+    //Firebase Variables
+    private FirebaseAuth mAuth;
+    private DatabaseReference mUserRef;
+    String currentUserId;
+    private DatabaseReference mPostRef, mLikeRef;
     FirebaseRecyclerAdapter<Posts,PostViewHolder> adapter;
 
 
     public HomeFragment() {
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
     }
 
     @Override
@@ -45,7 +66,14 @@ public class HomeFragment extends Fragment {
         //Initializing Variables
         fab_post= view.findViewById(R.id.fab_post);
         userpostList=view.findViewById(R.id.user_post_recyclerview);
+
+        //Firebase init
+        mAuth=FirebaseAuth.getInstance();
+        mUserRef=FirebaseDatabase.getInstance().getReference("Users");
         mPostRef= FirebaseDatabase.getInstance().getReference("Posts");
+        mLikeRef=FirebaseDatabase.getInstance().getReference("Likes");
+        currentUserId=mAuth.getCurrentUser().getUid();
+
 
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
@@ -71,12 +99,46 @@ public class HomeFragment extends Fragment {
         adapter= new FirebaseRecyclerAdapter<Posts, PostViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Posts model) {
+
+                final String postkey=getRef(position).getKey();
                 holder.txtfullname.setText(model.getFullname());
                 holder.txtdesc.setText(model.getPostDescription());
                 holder.txtdate.setText(model.getDate());
                 holder.txttime.setText(model.getTime());
                 holder.setProfileImage(model.getProfileImage(),getContext());
                 holder.setPostImageUrl(model.getPostImageUrl());
+                holder.setLikeButtonInfo(postkey);
+
+                holder.like_bt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        isLiked=true;
+                        mLikeRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                if(isLiked.equals(true)) {
+                                    if(dataSnapshot.child(postkey).hasChild(currentUserId)) {
+
+                                        mLikeRef.child(postkey).child(currentUserId).removeValue();
+                                        isLiked=false;
+
+                                    }
+                                    else {
+                                        mLikeRef.child(postkey).child(currentUserId).setValue(true);
+                                        isLiked=false;
+
+                                    }
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                });
+
 
             }
            @NonNull
