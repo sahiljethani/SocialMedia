@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/noPost"
+            android:id="@+id/ViewProfile_noPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/noFollowers"
+            android:id="@+id/ViewPost_noFollowers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -59,7 +59,7 @@
 
 
         <TextView
-            android:id="@+id/noFollowing"
+            android:id="@+id/ViewPost_noFollowing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
@@ -78,7 +78,7 @@
             android:textSize="20dp"
             app:layout_constraintEnd_toStartOf="@+id/line2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noPost" />
+            app:layout_constraintTop_toBottomOf="@+id/ViewProfile_noPost" />
 
         <TextView
             android:id="@+id/Followers"
@@ -89,7 +89,7 @@
             android:textSize="20dp"
             app:layout_constraintEnd_toStartOf="@+id/line1"
             app:layout_constraintStart_toEndOf="@+id/line2"
-            app:layout_constraintTop_toBottomOf="@+id/noFollowers" />
+            app:layout_constraintTop_toBottomOf="@+id/ViewPost_noFollowers" />
 
         <TextView
             android:id="@+id/Following"
@@ -100,7 +100,7 @@
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/line1"
-            app:layout_constraintTop_toBottomOf="@+id/noFollowing" />
+            app:layout_constraintTop_toBottomOf="@+id/ViewPost_noFollowing" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

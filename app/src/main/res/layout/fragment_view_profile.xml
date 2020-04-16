@@ -33,7 +33,7 @@
 
 
             <include
-                layout="@layout/snippet_profilepage_details"
+                layout="@layout/snippet_viewprofile_details"
                 android:id="@+id/userProfile_fragment_details"/>
 
         </LinearLayout>

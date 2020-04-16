@@ -2,6 +2,8 @@ package com.example.socialmedia.Fragments;
 
 
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,6 +17,12 @@ import android.widget.TextView;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
 import com.example.socialmedia.UserClient.UserClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -24,9 +32,12 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     SwipeRefreshLayout swipeLayout;
     private static final String TAG = "Profile Page Fragment";
     private User mCurruser;
-    private TextView mUsername,mFullname,mBio;
+    private TextView mUsername,mFullname,mBio,mFollowersCount,mFollowingCount;
     private CircleImageView mProfile_image;
     private Button mEditBtn;
+    private int FollowerCount;
+    private int FollowingCount;
+    private DatabaseReference Follow;
 
     public Profilepage() {
     }
@@ -34,6 +45,7 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Follow= FirebaseDatabase.getInstance().getReference("Follow");
         mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
         Log.d(TAG, "onCreate: mCurrUser bio is " + mCurruser.toString());
     }
@@ -50,6 +62,8 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         mBio= view.findViewById(R.id.user_bio);
         mProfile_image = view.findViewById(R.id.profile_pic);
         mEditBtn=view.findViewById(R.id.btnEditProfile);
+        mFollowersCount=view.findViewById(R.id.noFollowers);
+        mFollowingCount=view.findViewById(R.id.noFollowing);
 
         // Refresh
         swipeLayout = view.findViewById(R.id.swipe_container);
@@ -96,6 +110,29 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
             mBio.setText(getResources().getString(R.string.Default_bio));
         if(!mCurruser.getProfileImageUri().equals("defaultpic"))
             Picasso.get().load(mCurruser.getProfileImageUri()).into(mProfile_image);
+        getFollowCount();
+
+    }
+
+    private void getFollowCount(){
+
+
+        Follow.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FollowerCount= (int) dataSnapshot.child(mCurruser.getUserid()).child("Followers").getChildrenCount();
+                FollowingCount= (int) dataSnapshot.child(mCurruser.getUserid()).child("Following").getChildrenCount();
+                mFollowersCount.setText(Integer.toString(FollowerCount));
+                mFollowingCount.setText(Integer.toString(FollowingCount));
+                Log.d(TAG, "onDataChange: Followers"+FollowerCount + "  Following"+FollowingCount);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
