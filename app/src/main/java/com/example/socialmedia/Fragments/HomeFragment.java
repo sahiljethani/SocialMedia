@@ -29,22 +29,28 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
-    private User mCurruser;
+    public User mCurruser;
     private FloatingActionButton fab_post;
     private RecyclerView userpostList;
     Boolean isLiked=false;
+    private ArrayList<String> followingList=new ArrayList<>();
+    private ArrayList<User> followingListUser=new ArrayList<>();
+
 
 
     //Firebase Variables
     private FirebaseAuth mAuth;
     private DatabaseReference mUserRef;
     String currentUserId;
-    private DatabaseReference mPostRef, mLikeRef;
+    private DatabaseReference mPostRef, mLikeRef,mFollowingRef;
     FirebaseRecyclerAdapter<Posts,PostViewHolder> adapter;
 
 
@@ -61,6 +67,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View view= inflater.inflate(R.layout.fragment_home, container, false);
 
         //Initializing Variables
@@ -73,6 +80,7 @@ public class HomeFragment extends Fragment {
         mPostRef= FirebaseDatabase.getInstance().getReference("Posts");
         mLikeRef=FirebaseDatabase.getInstance().getReference("Likes");
         currentUserId=mAuth.getCurrentUser().getUid();
+        mFollowingRef=FirebaseDatabase.getInstance().getReference("Follow").child(currentUserId).child("Following");
 
 
         LinearLayoutManager linearLayoutManager= new LinearLayoutManager(getContext());
@@ -86,72 +94,90 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        showUserPost();
+        getFollowing();
+
         return view;
 
     }
 
+
     private void showUserPost() {
 
-        FirebaseRecyclerOptions options= new FirebaseRecyclerOptions.Builder<Posts>()
-                .setQuery(mPostRef,Posts.class).build();
+////////////////HERE MAIN PART///////////////////////////////////////////////////////////
+            FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Posts>()
+                    .setQuery(mPostRef, Posts.class).build();
 
-        adapter= new FirebaseRecyclerAdapter<Posts, PostViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Posts model) {
+            adapter = new FirebaseRecyclerAdapter<Posts, PostViewHolder>(options) {
+                @Override
+                protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Posts model) {
 
-                final String postkey=getRef(position).getKey();
-                holder.txtfullname.setText(model.getFullname());
-                holder.txtdesc.setText(model.getPostDescription());
-                holder.txtdate.setText(model.getDate());
-                holder.txttime.setText(model.getTime());
-                holder.setProfileImage(model.getProfileImage(),getContext());
-                holder.setPostImageUrl(model.getPostImageUrl());
-                holder.setLikeButtonInfo(postkey);
+                    if (followingList.contains(model.getUserid())) {
 
-                holder.like_bt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        isLiked=true;
-                        mLikeRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = new User();
+                        for (User newuser : followingListUser) {
 
-                                if(isLiked.equals(true)) {
-                                    if(dataSnapshot.child(postkey).hasChild(currentUserId)) {
+                            if (newuser.getUserid().equals(model.getUserid())) {
+                                user = newuser;
 
-                                        mLikeRef.child(postkey).child(currentUserId).removeValue();
-                                        isLiked=false;
-
-                                    }
-                                    else {
-                                        mLikeRef.child(postkey).child(currentUserId).setValue(true);
-                                        isLiked=false;
-
-                                    }
-                                }
                             }
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                        }
+
+                        //else if (model.getUserid().equals(currentUserId)) {
+                        //  user=mCurruser;
+                        //  }
+                        final String postkey = getRef(position).getKey();
+                        holder.txtfullname.setText(user.getFullname());
+                        holder.txtdesc.setText(model.getPostDescription());
+                        holder.txtdate.setText(model.getDate());
+                        holder.txttime.setText(model.getTime());
+                        holder.setProfileImage(user.getProfileImageUri(), getContext());
+                        holder.setPostImageUrl(model.getPostImageUrl());
+                        holder.setLikeButtonInfo(postkey);
+
+                        holder.like_bt.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                isLiked = true;
+                                mLikeRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        if (isLiked.equals(true)) {
+                                            if (dataSnapshot.child(postkey).hasChild(currentUserId)) {
+
+                                                mLikeRef.child(postkey).child(currentUserId).removeValue();
+                                                isLiked = false;
+
+                                            } else {
+                                                mLikeRef.child(postkey).child(currentUserId).setValue(true);
+                                                isLiked = false;
+                                            }
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                                });
                             }
                         });
                     }
-                });
+
+                }
 
 
-            }
-           @NonNull
-            @Override
-            public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.display_post,parent,false);
-                return new PostViewHolder(view);
-            }
-        };
+                @NonNull
+                @Override
+                public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.display_post, parent, false);
+                    return new PostViewHolder(view);
+                }
+            };
 
-       adapter.startListening();
-       adapter.notifyDataSetChanged();
-       userpostList.setAdapter(adapter);
+            adapter.startListening();
+            adapter.notifyDataSetChanged();
+            userpostList.setAdapter(adapter);
+
+
 
     }
 
@@ -164,6 +190,70 @@ public class HomeFragment extends Fragment {
         fragmentTransaction.add(R.id.mainContainer, fragment);
         fragmentTransaction.addToBackStack("posts");
         fragmentTransaction.commit();
+
+    }
+
+    private void getFollowing() {
+
+        mFollowingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()) {
+                        followingList.clear();
+                        for ( DataSnapshot snapshot : dataSnapshot.getChildren() )
+                        {
+                            String userid=snapshot.getKey();
+                            followingList.add(userid);
+
+                            Log.d(TAG, "onDataChange: Post user add in the list : "+ userid);
+                        }
+                      //  followingList.add(mCurruser.getUserid());
+                        Log.d(TAG, "onDataChange: Array Size is " + followingList.size());
+
+                        getFollowingUser();
+                    }
+
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void getFollowingUser() {
+
+        mUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    followingListUser.clear();
+                    for ( DataSnapshot snapshot : dataSnapshot.getChildren() )
+                    {
+                        User newUser=snapshot.getValue(User.class);
+                        if(followingList.contains(newUser.getUserid())) {
+                            followingListUser.add(newUser);
+                        }
+
+                        Log.d(TAG, "onDataChange: Post user add in the list : "+ newUser.getFullname());
+                    }
+                //    followingListUser.add(mCurruser);
+                    Log.d(TAG, "onDataChange: Array Size is " + followingListUser.size());
+
+                    showUserPost();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
 
     }
 

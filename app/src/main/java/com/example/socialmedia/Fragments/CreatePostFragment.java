@@ -81,6 +81,7 @@ public class CreatePostFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
 
+
     }
 
     @Override
@@ -97,11 +98,10 @@ public class CreatePostFragment extends Fragment {
 
         //Firebase
         mAuth= FirebaseAuth.getInstance();
-        current_user_id = mAuth.getCurrentUser().getUid();
+        current_user_id = mCurruser.getUserid();
         postImageRef = FirebaseStorage.getInstance().getReference();
         mPostRef = FirebaseDatabase.getInstance().getReference().child("Posts");
         mUserRef= FirebaseDatabase.getInstance().getReference("Users");
-
 
         //Methods
         postImage.setOnClickListener(new View.OnClickListener() {
@@ -110,23 +110,6 @@ public class CreatePostFragment extends Fragment {
                 pickImage();
             }
         });
-
-     /*   preview_text_bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(caption_field.toString().equals(" ")) {
-                    Toast.makeText(getActivity(),"Please enter something to post",Toast.LENGTH_SHORT).show();
-                } else {
-                    postImage.setImageBitmap(texttoImage(caption_field.toString()));
-                }
-
-            }
-        });
-
-
-      */
-
 
         post_bt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,10 +168,9 @@ public class CreatePostFragment extends Fragment {
         String postDescription = caption_field.getText().toString();
 
         Posts post= new Posts();
-        post.setFullname(mCurruser.getFullname());
+
         post.setUserid(mCurruser.getUserid());
         post.setPostDescription(postDescription);
-        post.setProfileImage(mCurruser.getProfileImageUri());
         post.setPostImageUrl(postImageUrl);
         post.setDate(saveCurrentDate);
         post.setTime(saveCurrentTime);

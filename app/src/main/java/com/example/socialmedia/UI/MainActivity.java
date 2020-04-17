@@ -197,8 +197,6 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         transaction.commit();
         getSupportActionBar().setTitle("Search Page");
 
-
-
     }
 
     private void gotoProfile() {

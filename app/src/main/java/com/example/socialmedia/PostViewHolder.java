@@ -75,7 +75,6 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-
     public void setProfileImage(String profileImage, Context ctx) {
         CircleImageView imageView= itemView.findViewById(R.id.user_profile_img);
         if(!(profileImage.equals("defaultpic"))) {
