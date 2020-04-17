@@ -111,21 +111,21 @@ public class HomeFragment extends Fragment {
                 @Override
                 protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Posts model) {
 
+                    User user = new User();
+
                     if (followingList.contains(model.getUserid())) {
 
-                        User user = new User();
                         for (User newuser : followingListUser) {
 
-                            if (newuser.getUserid().equals(model.getUserid())) {
+                            if (newuser.getUserid().equals(model.getUserid()))
                                 user = newuser;
 
-                            }
 
                         }
 
-                        //else if (model.getUserid().equals(currentUserId)) {
-                        //  user=mCurruser;
-                        //  }
+                    } else if (model.getUserid().equals(currentUserId))
+                        user=mCurruser;
+
                         final String postkey = getRef(position).getKey();
                         holder.txtfullname.setText(user.getFullname());
                         holder.txtdesc.setText(model.getPostDescription());
@@ -160,10 +160,9 @@ public class HomeFragment extends Fragment {
                                 });
                             }
                         });
-                    }
+
 
                 }
-
 
                 @NonNull
                 @Override
