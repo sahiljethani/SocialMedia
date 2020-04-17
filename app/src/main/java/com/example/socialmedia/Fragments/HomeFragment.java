@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
     Boolean isLiked=false;
     private ArrayList<String> followingList=new ArrayList<>();
     private ArrayList<User> followingListUser=new ArrayList<>();
+    //private String postkey;
 
 
 
@@ -60,7 +61,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
     }
 
     @Override
@@ -69,6 +69,9 @@ public class HomeFragment extends Fragment {
 
 
         View view= inflater.inflate(R.layout.fragment_home, container, false);
+        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
+        Log.d(TAG, "onCreateView: "+ mCurruser.getFullname());
+
 
         //Initializing Variables
         fab_post= view.findViewById(R.id.fab_post);
@@ -112,6 +115,8 @@ public class HomeFragment extends Fragment {
                 protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull Posts model) {
 
                     User user = new User();
+                    final String postkey = getRef(position).getKey();
+
 
                     if (followingList.contains(model.getUserid())) {
 
@@ -123,43 +128,20 @@ public class HomeFragment extends Fragment {
 
                         }
 
-                    } else if (model.getUserid().equals(currentUserId))
+                        HolderReady(user,model,holder,postkey);
+
+                    } else if (model.getUserid().equals(currentUserId)){
                         user=mCurruser;
+                        HolderReady(user,model,holder,postkey);
 
-                        final String postkey = getRef(position).getKey();
-                        holder.txtfullname.setText(user.getFullname());
-                        holder.txtdesc.setText(model.getPostDescription());
-                        holder.txtdate.setText(model.getDate());
-                        holder.txttime.setText(model.getTime());
-                        holder.setProfileImage(user.getProfileImageUri(), getContext());
-                        holder.setPostImageUrl(model.getPostImageUrl());
-                        holder.setLikeButtonInfo(postkey);
+                    }
+                    else{
 
-                        holder.like_bt.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                isLiked = true;
-                                mLikeRef.addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                        if (isLiked.equals(true)) {
-                                            if (dataSnapshot.child(postkey).hasChild(currentUserId)) {
+                       holder.itemView.setVisibility(View.GONE);
+                       holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
 
-                                                mLikeRef.child(postkey).child(currentUserId).removeValue();
-                                                isLiked = false;
-
-                                            } else {
-                                                mLikeRef.child(postkey).child(currentUserId).setValue(true);
-                                                isLiked = false;
-                                            }
-                                        }
-                                    }
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) { }
-                                });
-                            }
-                        });
+                    }
 
 
                 }
@@ -176,6 +158,47 @@ public class HomeFragment extends Fragment {
             adapter.notifyDataSetChanged();
             userpostList.setAdapter(adapter);
 
+
+
+    }
+
+    private void HolderReady(User user, Posts model, PostViewHolder holder, final String postkey ){
+
+        Log.d(TAG, "onBindViewHolder: User details are "+ user.toString());
+        //final String postkey2=postkey;
+        holder.txtfullname.setText(user.getFullname());
+        holder.txtdesc.setText(model.getPostDescription());
+        holder.txtdate.setText(model.getDate());
+        holder.txttime.setText(model.getTime());
+        holder.setProfileImage(user.getProfileImageUri(), getContext());
+        holder.setPostImageUrl(model.getPostImageUrl());
+        holder.setLikeButtonInfo(postkey);
+
+        holder.like_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isLiked = true;
+                mLikeRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        if (isLiked.equals(true)) {
+                            if (dataSnapshot.child(postkey).hasChild(currentUserId)) {
+
+                                mLikeRef.child(postkey).child(currentUserId).removeValue();
+                                isLiked = false;
+
+                            } else {
+                                mLikeRef.child(postkey).child(currentUserId).setValue(true);
+                                isLiked = false;
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) { }
+                });
+            }
+        });
 
 
     }
