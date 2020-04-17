@@ -3,20 +3,10 @@ package com.example.socialmedia.Models;
 public class Posts {
 
     private String userid;
-    private String fullname;
     private String postImageUrl;
     private String postDescription;
     private String date;
     private String time;
-    private String profileImage;
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
 
     public String getUserid() {
         return userid;
@@ -24,14 +14,6 @@ public class Posts {
 
     public void setUserid(String userid) {
         this.userid = userid;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
     }
 
     public String getPostImageUrl() {
@@ -70,12 +52,10 @@ public class Posts {
     public String toString() {
         return "Posts{" +
                 "userid='" + userid + '\'' +
-                ", fullname='" + fullname + '\'' +
                 ", postImageUrl='" + postImageUrl + '\'' +
                 ", postDescription='" + postDescription + '\'' +
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +
-                ", profileImage='" + profileImage + '\'' +
                 '}';
     }
 }
