@@ -70,19 +70,21 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         setupActionBar();
         setupDrawerLayout();
         setupNavigationHeader();
-        gotoHome();
+
+        getCurrUser();
+
 
         //Setting the Current User for the whole app and setting the navigation Details
 
-        mCurrUser=((UserClient)(getApplicationContext())).getUser();
+      //  mCurrUser=((UserClient)(getApplicationContext())).getUser();
 
-        if( (mCurrUser ==null)
+      /*  if( (mCurrUser ==null)
              || (!mCurrUser.getUserid().equals(currentUserId)) )
             getCurrUser();
         else
             setNavigationDetails();
-
-
+*/
+     //      gotoHome();
     }
 
     private void setNavigationDetails() {
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
                     ((UserClient)(getApplicationContext())).setUser(mCurrUser);
                     Log.d(TAG, "onDataChange: Curr User is " + mCurrUser.getFullname());
                    setNavigationDetails();
+                   gotoHome();
                 }
             }
 

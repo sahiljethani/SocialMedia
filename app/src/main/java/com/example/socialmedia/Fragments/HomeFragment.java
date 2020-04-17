@@ -234,9 +234,10 @@ public class HomeFragment extends Fragment {
                         User newUser=snapshot.getValue(User.class);
                         if(followingList.contains(newUser.getUserid())) {
                             followingListUser.add(newUser);
+                            Log.d(TAG, "onDataChange: Post user add in the list : "+ newUser.getFullname());
                         }
 
-                        Log.d(TAG, "onDataChange: Post user add in the list : "+ newUser.getFullname());
+
                     }
                 //    followingListUser.add(mCurruser);
                     Log.d(TAG, "onDataChange: Array Size is " + followingListUser.size());
