@@ -13,7 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.TextView;
+
+import com.example.socialmedia.Adapters.GridImageAdapter;
+import com.example.socialmedia.Models.Posts;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
 import com.example.socialmedia.UserClient.UserClient;
@@ -24,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -32,12 +39,17 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     SwipeRefreshLayout swipeLayout;
     private static final String TAG = "Profile Page Fragment";
     private User mCurruser;
-    private TextView mUsername,mFullname,mBio,mFollowersCount,mFollowingCount;
+    private TextView mUsername,mFullname,mBio,mFollowersCount,mFollowingCount,mPostCount;
     private CircleImageView mProfile_image;
     private Button mEditBtn;
     private int FollowerCount;
     private int FollowingCount;
+    private int PostCount;
     private DatabaseReference Follow;
+    private DatabaseReference PostRef;
+    private ArrayList <Posts> userpost=new ArrayList<>();
+    private GridView gridView;
+
 
     public Profilepage() {
     }
@@ -46,6 +58,7 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Follow= FirebaseDatabase.getInstance().getReference("Follow");
+        PostRef= FirebaseDatabase.getInstance().getReference("Posts");
         mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
         Log.d(TAG, "onCreate: mCurrUser bio is " + mCurruser.toString());
     }
@@ -64,6 +77,9 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         mEditBtn=view.findViewById(R.id.btnEditProfile);
         mFollowersCount=view.findViewById(R.id.noFollowers);
         mFollowingCount=view.findViewById(R.id.noFollowing);
+        gridView = view.findViewById(R.id.profilepage_gridview);
+        mPostCount=view.findViewById(R.id.noPost);
+
 
         // Refresh
         swipeLayout = view.findViewById(R.id.swipe_container);
@@ -111,6 +127,7 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         if(!mCurruser.getProfileImageUri().equals("defaultpic"))
             Picasso.get().load(mCurruser.getProfileImageUri()).into(mProfile_image);
         getFollowCount();
+        setupGridView();
 
     }
 
@@ -126,6 +143,52 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
                 mFollowingCount.setText(Integer.toString(FollowingCount));
                 Log.d(TAG, "onDataChange: Followers"+FollowerCount + "  Following"+FollowingCount);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
+    private void setupGridView(){
+        Log.d(TAG, "setupGridView: Setting up image grid.");
+
+        PostRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    userpost.clear();
+                    for ( DataSnapshot snapshot : dataSnapshot.getChildren() )
+                    {
+                        Posts post=snapshot.getValue(Posts.class);
+                        if(post.getUserid().equals(mCurruser.getUserid()))
+                            userpost.add(post);
+                        Log.d(TAG, "onDataChange: Post add in the list : "+ post.getPostDescription());
+                    }
+
+                    PostCount=userpost.size();
+                    mPostCount.setText(Integer.toString(PostCount));
+
+                    Log.d(TAG, "onDataChange: Array post is "+ userpost.size());
+                    //setup image grid
+                    int gridWidth = getResources().getDisplayMetrics().widthPixels;
+                    int imageWidth = gridWidth/3;
+                    gridView.setColumnWidth(imageWidth);
+
+                    ArrayList<String> imgUrls = new ArrayList<>();
+                    for(int i = 0; i < userpost.size(); i++){
+                        imgUrls.add(userpost.get(i).getPostImageUrl());
+                    }
+                    GridImageAdapter adapter = new GridImageAdapter(getActivity(),R.layout.layout_grid_imageview,
+                            "", imgUrls);
+                    gridView.setAdapter(adapter);
+
+
+                }
             }
 
             @Override
