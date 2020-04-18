@@ -82,10 +82,14 @@ public class SetupProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent galleryIntent = new Intent();
+                CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .start(SetupProfileActivity.this);
+
+               /* Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, 1);
+                startActivityForResult(galleryIntent, 1);*/
             }
         });
 
@@ -95,13 +99,13 @@ public class SetupProfileActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+       /* if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             CropImage.activity()
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1, 1)
                     .start(this);
-        }
+        }*/
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
