@@ -28,17 +28,19 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.View
     private ArrayList<User> UserList_Original;
     private ArrayList<User> UserList_Copy;
     private OnUserListener mOnUserListener;
+    private LinearLayout layout;
 
 
 
 
     private Context context;
 
-    public Userlist_Adapter(ArrayList<User> userList_Original, Context context, OnUserListener OnUserListener) {
+    public Userlist_Adapter(ArrayList<User> userList_Original, Context context, OnUserListener OnUserListener, LinearLayout layout) {
         UserList_Original = userList_Original;
         this.context = context;
         UserList_Copy = new ArrayList<>(UserList_Original);
         this.mOnUserListener=OnUserListener;
+        this.layout=layout;
 
     }
 
@@ -146,7 +148,8 @@ public class Userlist_Adapter extends RecyclerView.Adapter<Userlist_Adapter.View
             userimage = itemView.findViewById(R.id.useritem_image);
             user_fullname = itemView.findViewById(R.id.useritem_fullname);
             username = itemView.findViewById(R.id.useritem_username);
-            parentLayout = itemView.findViewById(R.id.parent_searchLayout);
+          //  parentLayout = itemView.findViewById(R.id.parent_searchLayout);
+            parentLayout= layout;
             mOnUserListener=OnUserListener;
             itemView.setOnClickListener(this);
         }

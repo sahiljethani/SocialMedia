@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -59,6 +60,7 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
     private Context context;
     private RecyclerView recyclerView;
     private Userlist_Adapter adapter;
+    private LinearLayout parentlayout;
 
     FragmentActionListener fragmentActionListener;
 
@@ -91,6 +93,7 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         recyclerView = view.findViewById(R.id.userlist_Recyclerview);
+        parentlayout=view.findViewById(R.id.parent_searchLayout);
         getUsers();
         setHasOptionsMenu(true);
 
@@ -134,7 +137,7 @@ public class SearchFragment extends Fragment implements Userlist_Adapter.OnUserL
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init recyclerview.");
-         adapter= new Userlist_Adapter(mUser,context,this);
+         adapter= new Userlist_Adapter(mUser,context,this,parentlayout);
         //RecyclerViewAdapter adapter = new RecyclerViewAdapter(this, mNames, mImageUrls);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
