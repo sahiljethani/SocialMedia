@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.example.socialmedia.Adapters.GridImageAdapter;
 import com.example.socialmedia.Models.Posts;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
+import com.example.socialmedia.UI.MainActivity;
 import com.example.socialmedia.UserClient.UserClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -123,6 +125,8 @@ public class ViewProfileFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
         userId = bundle.getString(FragmentActionListener.KEY_SELECTED_USERID);
+        if(userId.equals(mCurrUser.getUserid()))
+            gotoProfile();
         User_FollowersCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,6 +156,21 @@ public class ViewProfileFragment extends Fragment {
             }
         });
         getUser(userId);
+    }
+
+    private void gotoProfile(){
+
+
+        Log.d(TAG, "inflating profile page " );
+
+        Profilepage fragment = new Profilepage();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainContainer, fragment);
+       // transaction.addToBackStack(null);
+        fragment.setFragmentActionListener(fragmentActionListener);
+        transaction.commit();
+
+
     }
 
     private void getUser(String userId) {
