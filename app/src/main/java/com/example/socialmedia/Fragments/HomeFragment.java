@@ -105,6 +105,7 @@ public class HomeFragment extends Fragment {
 
 
     private void showUserPost() {
+        Log.d(TAG, "showUserPost: Called");
 
 ////////////////HERE MAIN PART///////////////////////////////////////////////////////////
             FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Posts>()
@@ -116,6 +117,7 @@ public class HomeFragment extends Fragment {
 
                     User user = new User();
                     final String postkey = getRef(position).getKey();
+                    Log.d(TAG, "onBindViewHolder: In Here");
 
 
                     if (followingList.contains(model.getUserid())) {
@@ -216,6 +218,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getFollowing() {
+        Log.d(TAG, "getFollowing: Called");
 
         mFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -232,10 +235,15 @@ public class HomeFragment extends Fragment {
                       //  followingList.add(mCurruser.getUserid());
                         Log.d(TAG, "onDataChange: Array Size is " + followingList.size());
 
-                        getFollowingUser();
+                      //  getFollowingUser();
+
                     }
 
+                    getFollowingUser();
+
                 }
+
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -246,7 +254,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void getFollowingUser() {
+        Log.d(TAG, "getFollowingUser: Called");
 
+        
         mUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -265,8 +275,10 @@ public class HomeFragment extends Fragment {
                 //    followingListUser.add(mCurruser);
                     Log.d(TAG, "onDataChange: Array Size is " + followingListUser.size());
 
-                    showUserPost();
+                    //showUserPost();
                 }
+
+                showUserPost();
 
             }
 

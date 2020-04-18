@@ -16,14 +16,27 @@
         <ImageView
             android:id="@+id/postImage"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="84dp"
+            android:layout_height="300dp"
+            android:background="@drawable/defaultpic"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@+id/caption_field"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/post_bt"
+            android:layout_width="195dp"
+            android:layout_height="51dp"
+            android:background="@drawable/button1"
+            android:text="POST"
+            android:textColor="#FFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/caption_field" />
 
         <EditText
             android:id="@+id/caption_field"
@@ -33,34 +46,25 @@
             android:gravity="start|top"
             android:hint="Add caption or post text"
             android:inputType="textMultiLine"
+            app:layout_constraintBottom_toTopOf="@+id/post_bt"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postImage" />
+
+        <ProgressBar
+            android:id="@+id/createpost_Pb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/postImage"
-            app:layout_constraintVertical_bias="0.194" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.287" />
 
-        <Button
-            android:id="@+id/preview_text_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="44dp"
-            android:text="Preview TextPost"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/caption_field"
-            app:layout_constraintVertical_bias="0.351" />
 
-        <Button
-            android:id="@+id/post_bt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="POST"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.612"
-            app:layout_constraintStart_toEndOf="@+id/preview_text_bt"
-            app:layout_constraintTop_toBottomOf="@+id/caption_field"
-            app:layout_constraintVertical_bias="0.351" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

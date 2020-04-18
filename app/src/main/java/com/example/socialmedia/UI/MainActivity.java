@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.mainContainer, fragment);
         transaction.commit();
-        getSupportActionBar().setTitle("Home Page");
+        getSupportActionBar().setTitle("Home");
 
     }
 

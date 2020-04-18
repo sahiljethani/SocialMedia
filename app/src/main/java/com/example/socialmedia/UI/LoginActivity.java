@@ -80,13 +80,17 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        mPb.setVisibility(View.VISIBLE);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         mPb.setVisibility(View.VISIBLE);
+
                         if (task.isSuccessful()) {
+
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             SendUserToMainActivity();

@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.socialmedia.Models.Posts;
@@ -66,6 +67,7 @@ public class CreatePostFragment extends Fragment {
     private String saveCurrentTime;
     private String postName;
     private String current_user_id;
+    private ProgressBar mPb;
 
 
     //Firebase Variables
@@ -93,8 +95,9 @@ public class CreatePostFragment extends Fragment {
        //Initializing Variables
         postImage=view.findViewById(R.id.postImage);
         post_bt=view.findViewById(R.id.post_bt);
-        preview_text_bt=view.findViewById(R.id.preview_text_bt);
+        //preview_text_bt=view.findViewById(R.id.preview_text_bt);
         caption_field=view.findViewById(R.id.caption_field);
+        mPb= view.findViewById(R.id.createpost_Pb);
 
         //Firebase
         mAuth= FirebaseAuth.getInstance();
@@ -114,8 +117,12 @@ public class CreatePostFragment extends Fragment {
         post_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mPb.setVisibility(View.VISIBLE);
+
                 if(imageUri==null) {
                     Toast.makeText(getActivity(), "Please choose an Image", Toast.LENGTH_SHORT).show();
+                    mPb.setVisibility(View.INVISIBLE);
+
                 } else uploadToStorage();
             }
         });
