@@ -1,6 +1,7 @@
 package com.example.socialmedia.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -49,6 +50,9 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     private DatabaseReference PostRef;
     private ArrayList <Posts> userpost=new ArrayList<>();
     private GridView gridView;
+    private FragmentActionListener fragmentActionListener;
+    private Context context;
+    // private DatabaseReference FollowActionRef;
 
 
     public Profilepage() {
@@ -57,9 +61,10 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
         Follow= FirebaseDatabase.getInstance().getReference("Follow");
         PostRef= FirebaseDatabase.getInstance().getReference("Posts");
-        mCurruser=((UserClient)(getActivity().getApplicationContext())).getUser();
+      //  FollowActionRef=FirebaseDatabase.getInstance().getReference("Follow").child(mCurruser.getUserid());
         Log.d(TAG, "onCreate: mCurrUser bio is " + mCurruser.toString());
     }
 
@@ -79,11 +84,13 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         mFollowingCount=view.findViewById(R.id.noFollowing);
         gridView = view.findViewById(R.id.profilepage_gridview);
         mPostCount=view.findViewById(R.id.noPost);
+        context=container.getContext();
 
 
         // Refresh
         swipeLayout = view.findViewById(R.id.swipe_container);
         swipeLayout.setOnRefreshListener(this);
+        //Buttons
         mEditBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,12 +98,43 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
             }
         });
 
+        mFollowingCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fragmentActionListener!=null){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_FOLLOW_ACTIVITY_SELECTED);
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_ACTION,"Following");
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_USERID,mCurruser.getUserid());
+                    fragmentActionListener.onActionPerformed(bundle);
+                }
+            }
+        });
+
+        mFollowersCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fragmentActionListener!=null){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_FOLLOW_ACTIVITY_SELECTED);
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_ACTION,"Followers");
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_USERID,mCurruser.getUserid());
+
+                    fragmentActionListener.onActionPerformed(bundle);
+                }
+            }
+
+        });
+
+
+
         //Set the layout
         setLayout();
 
         // Inflate the layout for this fragment
         return view ;
     }
+
 
     @Override
     public void onRefresh() {
@@ -112,6 +150,7 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.profile_fragment_container, fragment);
+        fragmentTransaction.addToBackStack("stack");
         fragmentTransaction.commit();
     }
 
@@ -183,7 +222,7 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
                     for(int i = 0; i < userpost.size(); i++){
                         imgUrls.add(userpost.get(i).getPostImageUrl());
                     }
-                    GridImageAdapter adapter = new GridImageAdapter(getActivity(),R.layout.layout_grid_imageview,
+                    GridImageAdapter adapter = new GridImageAdapter(context,R.layout.layout_grid_imageview,
                             "", imgUrls);
                     gridView.setAdapter(adapter);
 
@@ -198,5 +237,10 @@ public class Profilepage extends Fragment implements SwipeRefreshLayout.OnRefres
         });
 
     }
+
+    public void setFragmentActionListener(FragmentActionListener fragmentActionListener) {
+        this.fragmentActionListener = fragmentActionListener;
+    }
+
 
 }

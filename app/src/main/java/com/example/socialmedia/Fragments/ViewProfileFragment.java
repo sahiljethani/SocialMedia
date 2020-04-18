@@ -55,6 +55,7 @@ public class ViewProfileFragment extends Fragment {
     private GridView gridView;
     Boolean isFollowing = false;
     private ArrayList<Posts> userpost=new ArrayList<>();
+    private FragmentActionListener fragmentActionListener;
 
 
     public ViewProfileFragment() {
@@ -112,6 +113,8 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
+
+
         return view;
     }
 
@@ -120,6 +123,34 @@ public class ViewProfileFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Bundle bundle = getArguments();
         userId = bundle.getString(FragmentActionListener.KEY_SELECTED_USERID);
+        User_FollowersCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fragmentActionListener!=null){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_FOLLOW_ACTIVITY_SELECTED);
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_ACTION,"Followers");
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_USERID,userId);
+                    fragmentActionListener.onActionPerformed(bundle);
+                }
+
+            }
+        });
+
+        User_FollowingCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (fragmentActionListener!=null){
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FragmentActionListener.ACTION_KEY, FragmentActionListener.ACTION_VALUE_FOLLOW_ACTIVITY_SELECTED);
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_ACTION,"Following");
+                    bundle.putString(FragmentActionListener.KEY_SELECTED_USERID,userId);
+                    fragmentActionListener.onActionPerformed(bundle);
+                }
+
+            }
+        });
         getUser(userId);
     }
 
@@ -302,6 +333,11 @@ public class ViewProfileFragment extends Fragment {
             }
         });
 
+    }
+
+
+    public void setFragmentActionListener(FragmentActionListener fragmentActionListener) {
+        this.fragmentActionListener = fragmentActionListener;
     }
 
 }

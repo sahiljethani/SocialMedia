@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.socialmedia.Models.User;
@@ -61,6 +63,8 @@ public class EditProfile extends Fragment {
     private DatabaseReference mUserRef;
     private StorageReference mUserProfileImageRef;
     private User mCurruser;
+    private Context context;
+    private ProgressBar mPb;
     String currentUserId;
 
     Uri resultUri;
@@ -83,11 +87,13 @@ public class EditProfile extends Fragment {
                              Bundle savedInstanceState) {
 
         View view=inflater.inflate(R.layout.fragment_edit_profile, container, false);
+        context=container.getContext();
 
         //Initializing Variables
         user_bio = view.findViewById(R.id.edit_user_bio);
         saveUserbt = view.findViewById(R.id.edit_changeBtn);
         user_profile_pic= view.findViewById(R.id.editProfile_image);
+        mPb=view.findViewById(R.id.editProfile_Pb);
         //user_name=view.findViewById(R.id.user_name);
 
         //Firebase Variables
@@ -102,6 +108,7 @@ public class EditProfile extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: CLicked");
+                mPb.setVisibility(View.VISIBLE);
                 uploadImage();
             }
         });
@@ -110,10 +117,21 @@ public class EditProfile extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent galleryIntent = new Intent();
+                /*CropImage.activity()
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setAspectRatio(1, 1)
+                        .start(context);*/
+
+                Intent intent = CropImage.activity()
+                        .setAspectRatio(1,1)
+                        .getIntent(getContext());
+
+                startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
+
+               /* Intent galleryIntent = new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, 1);
+                startActivityForResult(galleryIntent, 1);*/
             }
         });
 
@@ -136,13 +154,13 @@ public class EditProfile extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+        /*if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             CropImage.activity()
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1, 1)
                     .start(getContext(),this);
-        }
+        }*/
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -193,6 +211,7 @@ public class EditProfile extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d("SetupProfile","Failed to upload Image"+e.getMessage());
+                mPb.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -224,6 +243,7 @@ public class EditProfile extends Fragment {
 
                 } else
                     Log.d("Setup", "onComplete: Not able to add user");
+                   mPb.setVisibility(View.INVISIBLE);
 
             }
 
@@ -237,10 +257,11 @@ public class EditProfile extends Fragment {
     private void SendUserToProfilePage() {
 
         Log.d(TAG, "inflating Profile Page " );
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.remove(this);
+        fragmentTransaction.detach(this);
         fragmentTransaction.commit();
+
 
     }
 

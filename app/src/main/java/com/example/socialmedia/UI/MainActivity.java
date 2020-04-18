@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.socialmedia.Fragments.FragmentActionListener;
 import com.example.socialmedia.Fragments.HomeFragment;
 import com.example.socialmedia.Fragments.SearchFragment;
+import com.example.socialmedia.Fragments.ViewFollowFragment;
 import com.example.socialmedia.Fragments.ViewProfileFragment;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.Fragments.Profilepage;
@@ -67,12 +68,12 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         nav_profile_image=navView.findViewById(R.id.nav_profile_image);
 
         //Initializing Layout
+        getCurrUser();
         setupActionBar();
         setupDrawerLayout();
         setupNavigationHeader();
 
-        getCurrUser();
-
+        
 
         //Setting the Current User for the whole app and setting the navigation Details
 
@@ -196,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         SearchFragment fragment = new SearchFragment();
         FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.mainContainer, fragment);
+        transaction.addToBackStack(null);
         fragment.setFragmentActionListener(this);
         transaction.commit();
         getSupportActionBar().setTitle("Search Page");
@@ -209,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
             Profilepage fragment = new Profilepage();
             FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.mainContainer, fragment);
+            transaction.addToBackStack(null);
+            fragment.setFragmentActionListener(this);
             transaction.commit();
             getSupportActionBar().setTitle("Profile Page");
 
@@ -276,7 +280,25 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
             case FragmentActionListener.ACTION_VALUE_USER_SELECTED:
                 gotoViewProfile (bundle);
                 break;
+            case FragmentActionListener.ACTION_VALUE_FOLLOW_ACTIVITY_SELECTED:
+                gotoViewFollow (bundle);
+                break;
         }
+    }
+
+    private void gotoViewFollow(Bundle bundle) {
+
+        Log.d(TAG, "inflating View Profile " );
+
+        ViewFollowFragment fragment = new ViewFollowFragment();
+        FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.mainContainer, fragment);
+        transaction.addToBackStack(null);
+        fragment.setFragmentActionListener(this);
+        fragment.setArguments(bundle);
+        transaction.commit();
+
+
     }
 
     private void gotoViewProfile(Bundle bundle) {
@@ -288,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         FragmentTransaction transaction = MainActivity.this.getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.mainContainer, fragment);
         transaction.addToBackStack(null);
+        fragment.setFragmentActionListener(this);
         fragment.setArguments(bundle);
         transaction.commit();
 
