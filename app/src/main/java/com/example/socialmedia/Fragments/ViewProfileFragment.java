@@ -14,8 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.TextView;
 
+import com.example.socialmedia.Adapters.GridImageAdapter;
+import com.example.socialmedia.Models.Posts;
 import com.example.socialmedia.Models.User;
 import com.example.socialmedia.R;
 import com.example.socialmedia.UserClient.UserClient;
@@ -26,6 +29,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.BitSet;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -40,13 +46,15 @@ public class ViewProfileFragment extends Fragment {
     private User user , mCurrUser;
     private FirebaseAuth mAuth;
     private DatabaseReference mUserRef;
-    private DatabaseReference Follow;
-    private TextView User_Fullname, User_bio, Username, User_FollowersCount , User_FollowingCount;
+    private DatabaseReference Follow, PostRef;
+    private TextView User_Fullname, User_bio, Username, User_FollowersCount , User_FollowingCount, User_PostCount;
     private CircleImageView User_image;
     private Button mBtnFollow;
     private Context context;
-    private int FollowerCount, FollowingCount;
+    private int FollowerCount, FollowingCount, PostCount;
+    private GridView gridView;
     Boolean isFollowing = false;
+    private ArrayList<Posts> userpost=new ArrayList<>();
 
 
     public ViewProfileFragment() {
@@ -58,6 +66,7 @@ public class ViewProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Follow=FirebaseDatabase.getInstance().getReference("Follow");
+        PostRef= FirebaseDatabase.getInstance().getReference("Posts");
 
         mCurrUser=((UserClient)(getActivity().getApplicationContext())).getUser();
 
@@ -86,6 +95,8 @@ public class ViewProfileFragment extends Fragment {
         mBtnFollow= view.findViewById(R.id.btnFollow);
         User_FollowersCount = view.findViewById(R.id.ViewPost_noFollowers);
         User_FollowingCount= view.findViewById(R.id.ViewPost_noFollowing);
+        User_PostCount=view.findViewById(R.id.ViewProfile_noPost);
+        gridView=view.findViewById(R.id.ViewProfile_gridview);
 
         mBtnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,7 +194,9 @@ public class ViewProfileFragment extends Fragment {
             User_bio.setText(getResources().getString(R.string.Default_bio));
         if(!user.getProfileImageUri().equals("defaultpic"))
             Picasso.get().load(user.getProfileImageUri()).into(User_image);
+        setupGridView();
         getFollowCount();
+
 
     }
 
@@ -242,6 +255,52 @@ public class ViewProfileFragment extends Fragment {
             mBtnFollow.setBackground(myDrawable);
             mBtnFollow.setText("Follow");
             mBtnFollow.setTextColor(Color.WHITE);}
+
+    }
+
+
+    private void setupGridView(){
+        Log.d(TAG, "setupGridView: Setting up image grid.");
+
+        PostRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    userpost.clear();
+                    for ( DataSnapshot snapshot : dataSnapshot.getChildren() )
+                    {
+                        Posts post=snapshot.getValue(Posts.class);
+                        if(post.getUserid().equals(user.getUserid()))
+                            userpost.add(post);
+                        Log.d(TAG, "onDataChange: Post add in the list : "+ post.getPostDescription());
+                    }
+
+                    PostCount=userpost.size();
+                    User_PostCount.setText(Integer.toString(PostCount));
+
+                    Log.d(TAG, "onDataChange: Array post is "+ userpost.size());
+                    //setup image grid
+                    int gridWidth = getResources().getDisplayMetrics().widthPixels;
+                    int imageWidth = gridWidth/3;
+                    gridView.setColumnWidth(imageWidth);
+
+                    ArrayList<String> imgUrls = new ArrayList<>();
+                    for(int i = 0; i < userpost.size(); i++){
+                        imgUrls.add(userpost.get(i).getPostImageUrl());
+                    }
+                    GridImageAdapter adapter = new GridImageAdapter(getActivity(),R.layout.layout_grid_imageview,
+                            "", imgUrls);
+                    gridView.setAdapter(adapter);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
