@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements FragmentActionLis
         setupDrawerLayout();
         setupNavigationHeader();
 
-        
+
 
         //Setting the Current User for the whole app and setting the navigation Details
 
